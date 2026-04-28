@@ -180,28 +180,106 @@ int IntBST::getPredecessor(int value) const{
 
 // returns the Node containing the successor of the given value
 IntBST::Node* IntBST::getSuccessorNode(int value) const{
-    Node* original = getNodeFor(value);
-    if(!original)
+    Node* current = getNodeFor(value);
+    if(!current)
         return NULL;
-    current = original->parent;
-    if(!current || current->right == original) //if no parent or right child
+    if(current->right) //if there is a right subtree
     {
-        current = original->right;
-        if(!current)
-            return NULL
+        current = current->right;
         while(current->left)
             current = current->left;
     }
+    else if(current->parent)
+    {
+        current = current->parent;
+        while(current->parent && current != current->parent->left)
+            current = current->parent;
+        current = current->parent;
+    }
+    else
+        current = NULL;
     return current;
 }
 
 // returns the successor value of the given value or 0 if there is none
 int IntBST::getSuccessor(int value) const{
-    return -1; // REPLACE THIS NON-SOLUTION
+    Node* snode = getSuccessorNode(value);
+    if(snode)
+        return snode->info;
+    return 0;
 }
 
 // deletes the Node containing the given value from the tree
 // returns true if the node exist and was deleted or false if the node does not exist
 bool IntBST::remove(int value){
-    return false; // REPLACE THIS NON-SOLUTION
+    Node* current = getNodeFor(value, root);
+    Node* temp = NULL;
+    if(!current)
+        return false;
+    if(!current->left && !current->right)
+    {
+        delete current;
+        current = NULL;
+        return true;
+    }
+    if(current->left && current->right)
+    {
+        if(current->parent)
+        {
+            if(current->parent->left == current)
+                current->parent->left = nullptr;
+            else 
+                current->parent->right = nullptr;
+        }
+        if (current == root) 
+            root = nullptr;
+        delete current;
+    }
+    else if(!current->right)
+    {
+        current->left->parent = current->parent;
+        if(current->parent)
+        {
+            if(current->parent->left == current)
+                current->parent->left = current->left;
+            else 
+                current->parent->right = current->left;
+        }
+    }
+    else if (!current->left)
+    {
+        current->right->parent = current->parent;
+        if(current->parent)
+        {
+            if(current->parent->left == current)
+                current->parent->left = current->right;
+            else
+                current->parent->right = current->right;
+        }
+        if (current == root) 
+            root = current->right;
+        delete current;
+    } else {
+        Node* pnode = getPredecessorNode(value);
+        if(pnode->left)
+        {
+            pnode->left->parent = pnode->parent;
+            if(pnode->parent->left == pnode)
+                pnode->parent->left = pnode->left;
+            else
+                pnode->parent->right = pnode->left;
+           
+        } 
+        else 
+        {
+            if(pnode->parent->left == pnode)
+                pnode->parent->left = nullptr;
+            else 
+                pnode->parent->right = nullptr;
+            
+        }
+        current->info = pnode->info;
+        delete pnode;
+    }
+    return true;
 }
