@@ -14,48 +14,53 @@ IntBST::IntBST() {
 
 // destructor deletes all nodes
 IntBST::~IntBST() {
-
+    clear(root);
+    root = nullptr;
 }
 
 // recursive helper for destructor
 void IntBST::clear(Node *n) {
-
+    if(!n)
+        return;
+    clear(n->left)
+    clear(n->right)
+    delete n;
 }
 
 // insert value in tree; return false if duplicate
 bool IntBST::insert(int value) {
-    Node* current = root;
-    bool insertpos = false;
-    while(insertpos)
+    if(!root)
     {
-        if(current->info == value)
-            return false;
-        if(current->info > value)
-        {
-            if(!current->left)
-            {
-                current->left = new Node;
-                insertpos = true;
-            }
-            current = current->left;
-        }
-        else
-        {
-            if(!current->right)
-            {
-                current->right = new Node;
-                insertpos=true
-            }
-            current = current->right;
-        }
+        root = new Node(value)
+        return true;
     }
-    current->info = value;
-    return true;
+    return insert(value, root);
 }
 
 // recursive helper for insert (assumes n is never 0)
 bool IntBST::insert(int value, Node *n) {
-    return false; // REPLACE THIS NON-SOLUTION
+    if(n->value == value)
+        return false;
+    if(n->value > value)
+    {
+        if(!n->left)
+        {
+            n->left = new Node(value);
+            n->left->parent = n;
+            return true;
+        }
+        return insert(n->left);
+    }
+    else
+    {
+        if(!n->right)
+        {
+            n->right = new Node(value);
+            n->right->parent = n;
+            return true;
+        }
+        return insert(n->right);
+    }
 }
 
 // print tree data pre-order
