@@ -213,73 +213,30 @@ int IntBST::getSuccessor(int value) const{
 // returns true if the node exist and was deleted or false if the node does not exist
 bool IntBST::remove(int value){
     Node* current = getNodeFor(value, root);
-    Node* temp = NULL;
-    if(!current)
+    if (!current) 
         return false;
-    if(!current->left && !current->right)
+
+    if (current->left && current->right) 
     {
-        delete current;
-        current = NULL;
-        return true;
-    }
-    if(current->left && current->right)
-    {
-        if(current->parent)
-        {
-            if(current->parent->left == current)
-                current->parent->left = nullptr;
-            else 
-                current->parent->right = nullptr;
-        }
-        if (current == root) 
-            root = nullptr;
-        delete current;
-    }
-    else if(!current->right)
-    {
-        current->left->parent = current->parent;
-        if(current->parent)
-        {
-            if(current->parent->left == current)
-                current->parent->left = current->left;
-            else 
-                current->parent->right = current->left;
-        }
-    }
-    else if (!current->left)
-    {
-        current->right->parent = current->parent;
-        if(current->parent)
-        {
-            if(current->parent->left == current)
-                current->parent->left = current->right;
-            else
-                current->parent->right = current->right;
-        }
-        if (current == root) 
-            root = current->right;
-        delete current;
-    } else {
         Node* pnode = getPredecessorNode(value);
-        if(pnode->left)
-        {
-            pnode->left->parent = pnode->parent;
-            if(pnode->parent->left == pnode)
-                pnode->parent->left = pnode->left;
-            else
-                pnode->parent->right = pnode->left;
-           
-        } 
-        else 
-        {
-            if(pnode->parent->left == pnode)
-                pnode->parent->left = nullptr;
-            else 
-                pnode->parent->right = nullptr;
-            
-        }
         current->info = pnode->info;
-        delete pnode;
+        current = pnode; 
     }
+
+    Node* temp = NULL;
+    if (current->left)
+        temp = current->left;
+    else
+        temp = current->right;
+    if (temp)
+        temp->parent = current->parent;
+    if (!current->parent)
+        root = temp;
+    else if (current == current->parent->left) 
+        current->parent->left = temp;
+    else 
+        current->parent->right = temp;
+
+    delete current;
     return true;
 }
