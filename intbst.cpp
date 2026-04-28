@@ -22,8 +22,8 @@ IntBST::~IntBST() {
 void IntBST::clear(Node *n) {
     if(!n)
         return;
-    clear(n->left)
-    clear(n->right)
+    clear(n->left);
+    clear(n->right);
     delete n;
 }
 
@@ -31,7 +31,7 @@ void IntBST::clear(Node *n) {
 bool IntBST::insert(int value) {
     if(!root)
     {
-        root = new Node(value)
+        root = new Node(value);
         return true;
     }
     return insert(value, root);
@@ -39,9 +39,9 @@ bool IntBST::insert(int value) {
 
 // recursive helper for insert (assumes n is never 0)
 bool IntBST::insert(int value, Node *n) {
-    if(n->value == value)
+    if(n->info == value)
         return false;
-    if(n->value > value)
+    if(n->info > value)
     {
         if(!n->left)
         {
@@ -49,7 +49,7 @@ bool IntBST::insert(int value, Node *n) {
             n->left->parent = n;
             return true;
         }
-        return insert(n->left);
+        return insert(value, n->left);
     }
     else
     {
@@ -59,7 +59,7 @@ bool IntBST::insert(int value, Node *n) {
             n->right->parent = n;
             return true;
         }
-        return insert(n->right);
+        return insert(value, n->right);
     }
 }
 
@@ -81,8 +81,6 @@ void IntBST::printPreOrder(Node *n) const {
 
 // print tree data in-order, with helper
 void IntBST::printInOrder() const {
-    if(!n)
-        return;
     printInOrder(root);
 }
 void IntBST::printInOrder(Node *n) const {
@@ -95,11 +93,7 @@ void IntBST::printInOrder(Node *n) const {
 
 // prints tree data post-order, with helper
 void IntBST::printPostOrder() const {
-    if(!n)
-        return;
-    printPostOrder(n->left);
-    printPostOrder(n->right);
-    cout << n->info << " ";
+    printPostOrder(root);
 }
 
 void IntBST::printPostOrder(Node *n) const {
@@ -112,8 +106,6 @@ void IntBST::printPostOrder(Node *n) const {
 
 // return sum of values in tree
 int IntBST::sum() const {
-    if(!n)
-        return 0;
     return sum(root);
 }
 
@@ -161,7 +153,7 @@ bool IntBST::contains(int value) const {
 
 // returns the Node containing the predecessor of the given value
 IntBST::Node* IntBST::getPredecessorNode(int value) const{
-    Node* current = getNodeFor(value);
+    Node* current = getNodeFor(value, root);
     if(!current)
         return NULL;
     current = current->left;
@@ -172,7 +164,7 @@ IntBST::Node* IntBST::getPredecessorNode(int value) const{
 
 // returns the predecessor value of the given value or 0 if there is none
 int IntBST::getPredecessor(int value) const{
-    node* pnode = getPredecessorNode(value);
+    Node* pnode = getPredecessorNode(value);
     if(!pnode)
         return 0;
     return pnode->info;
@@ -180,7 +172,7 @@ int IntBST::getPredecessor(int value) const{
 
 // returns the Node containing the successor of the given value
 IntBST::Node* IntBST::getSuccessorNode(int value) const{
-    Node* current = getNodeFor(value);
+    Node* current = getNodeFor(value, root);
     if(!current)
         return NULL;
     if(current->right) //if there is a right subtree
